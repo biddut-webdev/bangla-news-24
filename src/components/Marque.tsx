@@ -2,7 +2,7 @@ import MarqueeText from "react-marquee-text"
 import "react-marquee-text/dist/styles.css"
 
 interface Headline {
-  id: string
+  id: string | number
   title: string
   description: string
   link: string

@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 interface IMostReadNews {
-  id: string
+  id: string | number
   title: string
 }
 

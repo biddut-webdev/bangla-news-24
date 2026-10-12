@@ -6,8 +6,8 @@ interface IOtherSections {
   curationId: string;
   title: string;
   articles: {
-    id: number;
-    title: string;
+    id: number | string
+    title: string
     description: string;
     imageUrl: string;
     category: string;
