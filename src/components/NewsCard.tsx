@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export interface NewsItem {
-  id: string;
+  id: string | number;
   title: string;
   description: string;
   imageUrl: string;

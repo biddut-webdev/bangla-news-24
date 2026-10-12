@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 interface NewsItem {
-  id: string;
+  id: string | number;
   title: string;
   description: string;
   imageUrl: string;

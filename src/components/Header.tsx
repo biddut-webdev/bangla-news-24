@@ -2,7 +2,6 @@ import Image from 'next/image';
 import logo from '../../public/logo.webp'
 import Navlinks from './Navlinks';
 import Marque from './Marque';
-import Link from 'next/link';
 import UserInfo from './UserInfo';
 const Header = () => {
   const date = new Date().toLocaleDateString("bn-BD", {
