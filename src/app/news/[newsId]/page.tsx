@@ -1,4 +1,3 @@
-import Image from 'next/image';
 
 interface IBodyItem {
   type: string;
@@ -9,6 +8,15 @@ interface IBodyItem {
   text?: string;
 }
 
+interface INewsDetails {
+  title: string;
+  text?: string;
+  source?: string;
+  firstPublished?: string;
+  body?: IBodyItem[];
+  tags?: string[];
+}
+
 const NewsDetails = async ({
   params,
 }: {
@@ -16,29 +24,46 @@ const NewsDetails = async ({
 }) => {
   const { newsId } = await params;
 
-  const res = await fetch(
-    `https://news-api-v2.vercel.app/api/article/${newsId}`,
-    {
-      cache: 'no-store',
+  let details: INewsDetails | null = null;
+  let hasError = false;
+
+  try {
+    const res = await fetch(
+      `https://news-api-v2.vercel.app/api/article/${newsId}`,
+      { cache: "no-store" }
+    );
+
+    if (!res.ok) {
+      hasError = true;
+      console.error("News API status:", res.status);
+    } else {
+      const data = await res.json();
+      details = data?.data ?? null;
     }
-  );
+  } catch (error) {
+    hasError = true;
+    console.error("News API error:", error);
+  }
 
-  const data = await res.json();
+  if (hasError) {
+    return (
+      <div className="mx-auto max-w-4xl px-4 py-20 text-center">
+        <h1 className="mb-3 text-2xl font-bold">
+          News unavailable
+        </h1>
+        <p className="text-gray-500">
+          এই মুহূর্তে নিউজটি লোড করা যাচ্ছে না। পরে আবার চেষ্টা করুন।
+        </p>
+      </div>
+    );
+  }
 
-  console.log(data, 'DETAIL API RESPONSE');
-
-  const details = data.data;
-
-  console.log(details, 'DETAILS');
-
-  // API যদি কোনো article না দেয়
   if (!details) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-        <h1 className="text-2xl font-bold mb-3">
+      <div className="mx-auto max-w-4xl px-4 py-20 text-center">
+        <h1 className="mb-3 text-2xl font-bold">
           News not found
         </h1>
-
         <p className="text-gray-500">
           এই নিউজটির বিস্তারিত তথ্য পাওয়া যায়নি।
         </p>
@@ -47,64 +72,57 @@ const NewsDetails = async ({
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-
-      {/* Title */}
-      <h1 className="text-4xl font-bold leading-tight mb-4">
+    <main className="mx-auto max-w-4xl px-4 py-8">
+      <h1 className="mb-4 text-3xl font-bold leading-tight md:text-4xl">
         {details.title}
       </h1>
 
-      {/* Description */}
-      <p className="text-lg text-gray-600 mb-5">
-        {details.text?.slice(0, 200)}
-      </p>
+      {details.text && (
+        <p className="mb-5 text-lg text-gray-600">
+          {details.text.slice(0, 200)}
+        </p>
+      )}
 
-      {/* Date & Source */}
-      <div className="flex gap-3 text-sm text-gray-500 mb-5">
-        <span>{details.source}</span>
+      <div className="mb-5 flex flex-wrap gap-3 text-sm text-gray-500">
+        {details.source && <span>{details.source}</span>}
 
-        <span>•</span>
-
-        <span>
-          {details.firstPublished &&
-            new Date(details.firstPublished).toLocaleDateString('bn-BD')}
-        </span>
+        {details.firstPublished && (
+          <>
+            <span>•</span>
+            <span>
+              {new Date(details.firstPublished).toLocaleDateString("bn-BD")}
+            </span>
+          </>
+        )}
       </div>
 
-      {/* Image source */}
-      <p className="text-sm text-gray-500 mb-6">
-        ছবি: {details.source}
+      <p className="mb-6 text-sm text-gray-500">
+        ছবি: {details.source || "সংগৃহীত"}
       </p>
 
-      {/* Full Article */}
       <article className="text-lg leading-8">
-
-        {details.body?.map((item: IBodyItem, index: number) => {
-
-          // Image
-          if (item.type === 'image' && item.url) {
+        {details.body?.map((item, index) => {
+          if (item.type === "image" && item.url) {
             return (
               <figure key={index} className="my-8">
-
-                <Image
+                <img
                   src={item.url}
                   alt={item.caption || details.title}
                   width={item.width || 800}
                   height={item.height || 450}
-                  className="w-full h-auto rounded-lg"
+                  className="h-auto w-full rounded-lg"
+                  loading="lazy"
                 />
 
                 {item.caption && (
-                  <figcaption className="text-sm text-gray-500 mt-2">
+                  <figcaption className="mt-2 text-sm text-gray-500">
                     {item.caption}
                   </figcaption>
                 )}
-
               </figure>
             );
           }
 
-          // Text
           if (item.text) {
             return (
               <p key={index} className="mb-5">
@@ -115,19 +133,16 @@ const NewsDetails = async ({
 
           return null;
         })}
-
       </article>
 
-      {/* Tags */}
-      {details.tags?.length > 0 && (
-        <div className="border-t pt-4 mt-8">
+      {details.tags && details.tags.length > 0 && (
+        <div className="mt-8 border-t pt-4">
           <p className="text-gray-500">
-            {details.tags.join(', ')}
+            {details.tags.join(", ")}
           </p>
         </div>
       )}
-
-    </div>
+    </main>
   );
 };
 
