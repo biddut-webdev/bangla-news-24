@@ -3,6 +3,7 @@ import { Noto_Serif_Bengali } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const notoSerifBengali = Noto_Serif_Bengali({
   subsets: ["latin", 'bengali'],
@@ -24,7 +25,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main className='max-w-7xl mx-auto'>
           {children}
         </main>
-        <ToastContainer />
+        <ToastContainer position="top-right" autoClose={3000} />
       </body>
     </html>
   );
