@@ -17,7 +17,7 @@ Bangla News 24 is a Bengali news web application built with Next.js, React, and 
 
 <!-- Add your actual project screenshot here -->
 <p align="center">
-  <img src="./public/screenshot.png" width="100%" alt="Bangla News 24 Homepage" />
+  <img src="./public/bangla-news-24.png" width="100%" alt="Bangla News 24 Homepage" />
 </p>
 
 ---
